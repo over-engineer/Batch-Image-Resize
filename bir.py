@@ -5,7 +5,7 @@
 # https://github.com/dn0z/Batch-Image-Resize
 
 import os
-from PIL import Image
+import PIL.Image
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -68,7 +68,7 @@ class Application(Frame):
         """
 
         extension = filename.split(".")[-1]
-        return filename[:-len(extension)] + suffix + "." + file_type.lowercase()
+        return filename[:-(len(extension) + 1)] + suffix + "." + file_type.lower()
 
     def export_file(self, path, name, width, height, export_type, overwrite):
         """
@@ -85,8 +85,8 @@ class Application(Frame):
         img_path = os.path.join(path, name)
 
         # open the given image and resize it
-        img = Image.open(img_path)
-        img = img.resize((width, height), Image.ANTIALIAS)
+        img = PIL.Image.open(img_path)
+        img = img.resize((width, height), PIL.Image.ANTIALIAS)
 
         # set the destination image file we want to save
         dest_img_name = self.get_filename_with_type(name, export_type, "_resized")
@@ -94,8 +94,7 @@ class Application(Frame):
             dest_img_name = name
 
         # save the resized/converted image
-        print("Save to " + os.path.join(path, dest_img_name))
-        # img.save(os.path.join(path, dest_img_name))
+        img.save(os.path.join(path, dest_img_name))
 
     def init_export(self):
         """
@@ -117,6 +116,7 @@ class Application(Frame):
         for path, subdirs, files in os.walk(directory_path):
             for name in files:
                 if self.is_image(name):
+                    # TODO: Add a new window with a progress bar while exporting images
                     self.export_file(path, name, width, height, export_type, overwrite)
 
         # at this point, we are done with our exports, display a success message
