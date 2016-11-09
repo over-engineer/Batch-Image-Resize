@@ -4,6 +4,8 @@
 # Copyright (c) 2016 dn0z
 # https://github.com/dn0z/Batch-Image-Resize
 
+import os
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -44,12 +46,31 @@ class Application(Frame):
 
         return messagebox.askyesno("Export confirmation", confirm_msg)
 
+    def export(self):
+        print("Exporting")
+
     def export_button_handler(self):
         """
         The handler of the Export button
         """
 
-        print(self.confirm_settings())
+        selected_directory = self.selected_directory.get()
+
+        # Check if we are ready to export
+        if selected_directory == "No directory selected":
+            # No directory selected
+            messagebox.showerror("Invalid directory", "You have to select a directory first")
+        else:
+            # Directory selected
+            if not os.path.isdir(selected_directory):
+                # Directory does not exist
+                messagebox.showerror("Invalid directory",
+                                     "The directory \"" + selected_directory + "\" does not exist")
+            else:
+                # Directory exists
+                if self.confirm_settings():
+                    # Settings confirmed, we are ready to export
+                    self.export()
 
     def browse_for_directory(self):
         """
@@ -152,6 +173,7 @@ def main():
 
     root.title("Batch Image Resize")
     root.geometry("360x210")
+    root.resizable(0, 0)
 
     style = ttk.Style()
     style.theme_use("vista")
