@@ -10,8 +10,15 @@ from tkinter import filedialog
 
 
 class Application(Frame):
+    def set_properties_defaults(self):
+        self.selected_directory.set("No directory selected")
+        self.export_properties["width"].set("width px")
+        self.export_properties["height"].set("height px")
+        self.export_properties["type"].set("PNG")   # default export type
+        self.overwrite_original.set(0)              # default is disabled
+
     def browse_for_directory(self):
-        images_dir_path = filedialog.askdirectory()
+        self.selected_directory.set(filedialog.askdirectory())
 
     def create_widgets(self):
         """
@@ -31,32 +38,33 @@ class Application(Frame):
         label.grid(row=0, column=0, columnspan=3, pady=8)
 
         # Browse
-        browse_field = ttk.Entry(main_container)
-        browse_field.insert(0, "No directory selected")
+        browse_field = ttk.Entry(main_container, textvariable=self.selected_directory)
         browse_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=2)
 
         browse_btn = ttk.Button(main_container)
         browse_btn["text"] = "Browse"
-        browse_btn["command"] = lambda: self.browse_for_directory
+        browse_btn["command"] = lambda: self.browse_for_directory()
         browse_btn.grid(row=1, column=2, sticky="we", padx=2)
 
         # Resize to
         resize_to_label = Label(main_container, text="Resize to:", font=font_medium)
         resize_to_label.grid(row=2, column=0, sticky="e")
 
-        resize_width_field = ttk.Entry(main_container)
-        resize_width_field.insert(0, "width px")
+        resize_width_field = ttk.Entry(main_container, textvariable=self.export_properties["width"])
         resize_width_field.grid(row=2, column=1, padx=2)
 
-        resize_height_field = ttk.Entry(main_container)
-        resize_height_field.insert(0, "height px")
+        resize_height_field = ttk.Entry(main_container, textvariable=self.export_properties["height"])
         resize_height_field.grid(row=2, column=2, padx=3)
 
         # Save as
         save_as_label = Label(main_container, text="Save as:", font=font_medium)
         save_as_label.grid(row=3, column=0, sticky="e")
 
-        save_as_dropdown = ttk.OptionMenu(main_container, self.export_type, self.export_type.get(), "PNG", "JPEG")
+        save_as_dropdown = ttk.OptionMenu(main_container,
+                                          self.export_properties["type"],
+                                          self.export_properties["type"].get(),
+                                          "PNG",
+                                          "JPEG")
         save_as_dropdown.grid(row=3, column=1, sticky="we", padx=2)
 
         # Overwrite original
@@ -74,7 +82,7 @@ class Application(Frame):
 
         # Copyright
         copyright_label = Label(main_container, text="Copyright (c) 2016 dn0z | v0.1", font=font_small)
-        copyright_label.grid(row=5, column=0, columnspan=3, pady=20)
+        copyright_label.grid(row=5, column=0, columnspan=3, sticky="we", pady=20)
 
     def __init__(self, parent=None):
         """
@@ -85,13 +93,17 @@ class Application(Frame):
         Frame.__init__(self, parent)
 
         # properties
-        self.export_type = StringVar(self)
-        self.export_type.set("PNG")             # default export type
+        self.selected_directory = StringVar(self)
         self.overwrite_original = IntVar(self)
-        self.overwrite_original.set(0)          # default is disabled
+        self.export_properties = {
+            "width": StringVar(self),
+            "height": StringVar(self),
+            "type": StringVar(self)
+        }
 
         # call methods
         self.grid()
+        self.set_properties_defaults()
         self.create_widgets()
 
 
