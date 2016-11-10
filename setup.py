@@ -4,7 +4,7 @@ import py2exe
 setup(
     windows=[
         {
-            "script": "Batch Image Resize",
+            "script": "bir.py",
             "icon_resources": [(1, "icon.ico")]
         }
     ]
