@@ -135,6 +135,7 @@ class Application(Frame):
         self.progress_window = Toplevel(self)
         self.progress_window.title("Exporting")
         self.progress_window.geometry("300x100")
+        self.progress_window.iconbitmap("icon.ico")
 
         Label(self.progress_window,
               text="Exporting images",
@@ -159,6 +160,7 @@ class Application(Frame):
         self.about_window = Toplevel(self)
         self.about_window.title("About")
         self.about_window.geometry("400x300")
+        self.about_window.iconbitmap("icon.ico")
 
         # Header
         header_imagetk = imgedit.HelpingMethods.get_imagetk("about_header.png")
@@ -415,6 +417,7 @@ def main():
 
     root.title("Batch Image Resize")
     root.geometry("360x210")
+    root.iconbitmap("icon.ico")
     root.resizable(0, 0)
 
     style = ttk.Style()

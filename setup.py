@@ -4,7 +4,7 @@ import py2exe
 setup(
     windows=[
         {
-            "script": "LoL Skype DnD.py",
+            "script": "Batch Image Resize",
             "icon_resources": [(1, "icon.ico")]
         }
     ]
