@@ -1,5 +1,7 @@
 # Batch Image Resize
 
+![screenshot](about_header.png?raw=true)
+
 ### What is this?
 This is a simple and open source tool written in
 [Python](https://www.python.org/) to resize multiple images at once.
@@ -17,10 +19,10 @@ to overwrite the original files.
 ### How to build it?
 1. Make sure you have installed [Python 3](https://www.python.org/downloads/)
 2. Get these:
-- [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
-- [enum34](https://pypi.python.org/pypi/enum34)
-- [py2exe](https://pypi.python.org/pypi/py2exe/)
-- [setuptools](https://pypi.python.org/pypi/setuptools)
+    - [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
+    - [enum34](https://pypi.python.org/pypi/enum34)
+    - [py2exe](https://pypi.python.org/pypi/py2exe/)
+    - [setuptools](https://pypi.python.org/pypi/setuptools)
 3. Run `build.bat`
 
 ### Version info
