@@ -114,18 +114,41 @@ class Application(Frame):
         else:
             # Valid settings, confirm settings with the user and export
             if self.confirm_settings():
-                result = imgedit.export_all_in_dir(
-                    self.selected_directory.get(),
-                    int(self.export_properties["width"].get()),
-                    int(self.export_properties["height"].get()),
-                    self.export_properties["type"].get(),
-                    self.overwrite_original.get()
-                )
+                # result = imgedit.export_all_in_dir(
+                #     self.selected_directory.get(),
+                #     int(self.export_properties["width"].get()),
+                #     int(self.export_properties["height"].get()),
+                #     self.export_properties["type"].get(),
+                #     self.overwrite_original.get()
+                # )
 
-                if result:
-                    # at this point, we are done with our exports, display a success message
-                    messagebox.showinfo("Exports completed",
-                                        "All images were exported successfully")
+                # Display progress
+                if self.progress_window is not None:
+                    self.progress_window.destroy()
+
+                self.progress_window = Toplevel(self)
+                self.progress_window.title("Exporting")
+                self.progress_window.geometry("300x100")
+                #self.progress_window.iconbitmap("icon.ico")
+
+                progress_label = Label(self.progress_window, text="Exporting images", font=("Segoe UI", 16))
+                # progress_label.grid(row=0, column=0, sticky="we")
+                progress_label.pack(fill="x", side="top")
+
+                progress_bar = ttk.Progressbar(self.progress_window,
+                                                      orient="horizontal",
+                                                      length=280,
+                                                      mode="determinate")
+                # progress_bar.pack(expand=True, fill="both")
+                # progress_bar.grid(row=1, column=0, sticky="wes", padx=10)
+                progress_bar.pack(expand=True, fill="both", side="bottom")
+                progress_bar["value"] = 60
+                progress_bar["maximum"] = 100
+
+                # if result:
+                #     # at this point, we are done with our exports, display a success message
+                #     messagebox.showinfo("Exports completed",
+                #                         "All images were exported successfully")
 
     def browse_for_directory(self):
         """
@@ -147,6 +170,15 @@ class Application(Frame):
             self.save_as_dropdown.configure(state="disabled")
         else:
             self.save_as_dropdown.configure(state="enabled")
+
+    def clear_entry(self, e):
+        """
+        Clear the entry (gets called when an entry is focused)
+
+        :param e: the event parameter
+        :return:
+        """
+        e.widget.delete(0, "end")
 
     def create_widgets(self):
         """
@@ -178,9 +210,11 @@ class Application(Frame):
 
         resize_width_field = ttk.Entry(main_container, textvariable=self.export_properties["width"])
         resize_width_field.grid(row=2, column=1, padx=2)
+        resize_width_field.bind("<FocusIn>", self.clear_entry)
 
         resize_height_field = ttk.Entry(main_container, textvariable=self.export_properties["height"])
         resize_height_field.grid(row=2, column=2, padx=3)
+        resize_height_field.bind("<FocusIn>", self.clear_entry)
 
         # Save as
         save_as_label = Label(main_container, text="Save as:", font=font_medium)
@@ -220,6 +254,7 @@ class Application(Frame):
 
         # properties
         self.save_as_dropdown = None
+        self.progress_window = None
 
         self.selected_directory = StringVar(self)
         self.overwrite_original = BooleanVar(self)
