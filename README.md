@@ -1,6 +1,6 @@
 # Batch Image Resize
 
-![screenshot](about_header.png?raw=true)
+![screenshot](screenshot.png?raw=true)
 
 ### What is this?
 This is a simple and open source tool written in
