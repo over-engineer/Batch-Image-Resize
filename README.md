@@ -19,10 +19,13 @@ to overwrite the original files.
 ### How to build it?
 1. Make sure you have installed [Python 3](https://www.python.org/downloads/)
 2. Get these:
-    - [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
-    - [enum34](https://pypi.python.org/pypi/enum34)
-    - [py2exe](https://pypi.python.org/pypi/py2exe/)
-    - [setuptools](https://pypi.python.org/pypi/setuptools)
+    | Module                                                                            |
+    | ----------------------------------------------------- | ------------------------- |
+    | [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)   | `pip install Pillow`      |
+    | [enum34](https://pypi.python.org/pypi/enum34)         | `pip install enum34`      |
+    | [py2exe](https://pypi.python.org/pypi/py2exe/)        | `pip install py2exe`      |
+    | [setuptools](https://pypi.python.org/pypi/setuptools) | `pip install setuptools`  |
+
 3. Run `build.bat`
 
 ### Version info

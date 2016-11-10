@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python3
 
 # Batch Image Resize
 # Copyright (c) 2016 dn0z
