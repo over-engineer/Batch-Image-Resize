@@ -131,16 +131,14 @@ class Application(Frame):
                 self.progress_window.geometry("300x100")
                 #self.progress_window.iconbitmap("icon.ico")
 
-                progress_label = Label(self.progress_window, text="Exporting images", font=("Segoe UI", 16))
-                # progress_label.grid(row=0, column=0, sticky="we")
-                progress_label.pack(fill="x", side="top")
+                Label(self.progress_window,
+                      text="Exporting images",
+                      font=("Segoe UI", 16)).pack(fill="x", side="top")
 
                 progress_bar = ttk.Progressbar(self.progress_window,
                                                       orient="horizontal",
                                                       length=280,
                                                       mode="determinate")
-                # progress_bar.pack(expand=True, fill="both")
-                # progress_bar.grid(row=1, column=0, sticky="wes", padx=10)
                 progress_bar.pack(expand=True, fill="both", side="bottom")
                 progress_bar["value"] = 60
                 progress_bar["maximum"] = 100
@@ -194,19 +192,19 @@ class Application(Frame):
         main_container.grid(row=0, column=0, padx=20)
 
         # Header/title
-        label = Label(main_container, text="Batch Image Resize", font=font_big)
-        label.grid(row=0, column=0, columnspan=3, pady=8)
+        Label(main_container, text="Batch Image Resize", font=font_big).grid(
+            row=0, column=0, columnspan=3, pady=8)
 
         # Browse
-        browse_field = ttk.Entry(main_container, textvariable=self.selected_directory)
-        browse_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=2)
+        ttk.Entry(main_container, textvariable=self.selected_directory).grid(
+            row=1, column=0, columnspan=2, sticky="we", padx=2)
 
-        browse_btn = ttk.Button(main_container, text="Browse", command=self.browse_for_directory)
-        browse_btn.grid(row=1, column=2, sticky="we", padx=2)
+        ttk.Button(main_container, text="Browse", command=self.browse_for_directory).grid(
+            row=1, column=2, sticky="we", padx=2)
 
         # Resize to
-        resize_to_label = Label(main_container, text="Resize to:", font=font_medium)
-        resize_to_label.grid(row=2, column=0, sticky="e")
+        Label(main_container, text="Resize to:", font=font_medium).grid(
+            row=2, column=0, sticky="e")
 
         resize_width_field = ttk.Entry(main_container, textvariable=self.export_properties["width"])
         resize_width_field.grid(row=2, column=1, padx=2)
@@ -217,8 +215,8 @@ class Application(Frame):
         resize_height_field.bind("<FocusIn>", self.clear_entry)
 
         # Save as
-        save_as_label = Label(main_container, text="Save as:", font=font_medium)
-        save_as_label.grid(row=3, column=0, sticky="e")
+        Label(main_container, text="Save as:", font=font_medium).grid(
+            row=3, column=0, sticky="e")
 
         self.save_as_dropdown = ttk.OptionMenu(main_container,
                                                self.export_properties["type"],
@@ -228,21 +226,21 @@ class Application(Frame):
         self.save_as_dropdown.grid(row=3, column=1, sticky="we", padx=2)
 
         # Overwrite original
-        overwrite_checkbox = ttk.Checkbutton(main_container,
-                                             text="Overwrite original",
-                                             variable=self.overwrite_original,
-                                             onvalue=True,
-                                             offvalue=False,
-                                             command=self.toggle_save_as_dropdown)
-        overwrite_checkbox.grid(row=4, column=0, columnspan=2, sticky="w")
+        ttk.Checkbutton(main_container,
+                        text="Overwrite original",
+                        variable=self.overwrite_original,
+                        onvalue=True,
+                        offvalue=False,
+                        command=self.toggle_save_as_dropdown).grid(
+            row=4, column=0, columnspan=2, sticky="w")
 
         # Export
-        export_btn = ttk.Button(main_container, text="Export", command=self.export_button_handler)
-        export_btn.grid(row=3, column=2, rowspan=2, sticky="nesw", padx=2)
+        ttk.Button(main_container, text="Export", command=self.export_button_handler).grid(
+            row=3, column=2, rowspan=2, sticky="nesw", padx=2)
 
         # Copyright
-        copyright_label = Label(main_container, text="Copyright (c) 2016 dn0z | v0.1", font=font_small)
-        copyright_label.grid(row=5, column=0, columnspan=3, sticky="we", pady=20)
+        Label(main_container, text="Copyright (c) 2016 dn0z | v0.1", font=font_small).grid(
+            row=5, column=0, columnspan=3, sticky="we", pady=20)
 
     def __init__(self, parent=None):
         """
