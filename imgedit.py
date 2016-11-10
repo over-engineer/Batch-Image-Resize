@@ -6,6 +6,7 @@
 
 import os
 import PIL.Image
+import PIL.ImageTk
 
 
 class HelpingMethods(object):
@@ -34,6 +35,17 @@ class HelpingMethods(object):
 
         extension = filename.split(".")[-1]
         return filename[:-(len(extension) + 1)] + suffix + "." + file_type.lower()
+
+    @staticmethod
+    def get_imagetk(filename):
+        """
+        Open an image and return it as an `ImageTk` object
+
+        :param filename: the filename of the image we want to open
+        :return: the `ImageTk` object
+        """
+
+        return PIL.ImageTk.PhotoImage(PIL.Image.open(filename))
 
 
 class ImgEdit(object):

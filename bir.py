@@ -7,7 +7,8 @@
 import imgedit
 
 import os
-import threading, queue
+import queue
+import threading
 
 from enum import Enum
 from tkinter import *
@@ -146,6 +147,69 @@ class Application(Frame):
         self.progress_bar.pack(expand=True, fill="both", side="bottom")
         self.progress_bar["value"] = 0
 
+    def display_about(self):
+        """
+        Display the about window (with a scrollbar)
+        """
+
+        if self.about_window is not None:
+            self.about_window.destroy()
+
+        # Set the window
+        self.about_window = Toplevel(self)
+        self.about_window.title("About")
+        self.about_window.geometry("400x300")
+
+        # Header
+        header_imagetk = imgedit.HelpingMethods.get_imagetk("about_header.png")
+
+        header_label = Label(self.about_window, width=400, height=150)
+        header_label.pack(side="top", fill="both")
+        header_label.configure(image=header_imagetk)
+        header_label.image = header_imagetk
+
+        # Text with scrollbar
+        t = Text(self.about_window, width=300, height=200, font=("Courier New", 11))
+
+        scrollbar = ttk.Scrollbar(self.about_window)
+        scrollbar.pack(side="right", fill="y")
+        t.pack(side="left", fill="y")
+        scrollbar.config(command=t.yview)
+        t.config(yscrollcommand=scrollbar.set)
+
+        t.insert(END,
+                 "Batch Image Resize (v0.1)"
+                 "\n"
+                 "\nDeveloped by dn0z"
+                 "\nhttps://github.com/dn0z/Batch-Image-Resize"
+                 "\n"
+                 "\nThe icon is designed by Vecteezy "
+                 "(https://iconfinder.com/icons/532771) "
+                 "and it is licensed under Creative Commons "
+                 "(Attribution-Share Alike 3.0 Unported)"
+                 "\n\n"
+                 "The MIT License (MIT)"
+                 "\n\n"
+                 "Copyright (c) 2016 dn0z"
+                 "\n\n"
+                 "Permission is hereby granted, free of charge, to any person obtaining a copy"
+                 "of this software and associated documentation files (the \"Software\"), to deal"
+                 "in the Software without restriction, including without limitation the rights"
+                 "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell"
+                 "copies of the Software, and to permit persons to whom the Software is"
+                 "furnished to do so, subject to the following conditions:"
+                 "\n\n"
+                 "The above copyright notice and this permission notice shall be included in all"
+                 "copies or substantial portions of the Software."
+                 "\n\n"
+                 "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+                 "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+                 "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE"
+                 "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER"
+                 "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
+                 "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
+                 "SOFTWARE.")
+
     def get_settings_status(self):
         """
         Check if our settings are valid (directory exists, width and height are digits etc)
@@ -198,11 +262,10 @@ class Application(Frame):
         else:
             # Valid settings, confirm settings with the user and export
             if self.confirm_settings():
-                # num_of_images = imgedit.image_files_in_dir(self.selected_directory.get())
-
                 self.display_progress_window()
-                print("Progress window is on screen")
 
+                # call `ImgEdit.export_all_in_dir` as the target of a new thread
+                # and put the final result in a `Queue`
                 q = queue.Queue()
                 my_thread = threading.Thread(target=self.img_edit.export_all_in_dir,
                                              args=(self.selected_directory.get(),
@@ -305,9 +368,13 @@ class Application(Frame):
         ttk.Button(main_container, text="Export", command=self.export_button_handler).grid(
             row=3, column=2, rowspan=2, sticky="nesw", padx=2)
 
+        # About
+        ttk.Button(main_container, text="About", command=self.display_about).grid(
+            row=5, column=2, sticky="we")
+
         # Copyright
         Label(main_container, text="Copyright (c) 2016 dn0z | v0.1", font=font_small).grid(
-            row=5, column=0, columnspan=3, sticky="we", pady=20)
+            row=5, column=0, columnspan=2, sticky="we", pady=20)
 
     def __init__(self, parent=None):
         """
@@ -318,6 +385,7 @@ class Application(Frame):
         Frame.__init__(self, parent)
 
         # properties
+        self.about_window = None
         self.save_as_dropdown = None
         self.progress_window = None
         self.progress_bar = None
