@@ -48,20 +48,40 @@ def export_file(path, name, width, height, export_type, overwrite):
 
     img_path = os.path.join(path, name)
 
-    # open the given image and resize it
-    img = PIL.Image.open(img_path)
-    img = img.resize((width, height), PIL.Image.ANTIALIAS)
-
     # set the destination image file we want to save
     dest_img_name = get_filename_with_type(name, export_type, "_resize")
     if overwrite:
         dest_img_name = name
 
-    # save the resized/converted image
-    img.save(os.path.join(path, dest_img_name))
+    try:
+        # open the given image, resize and save it
+        img = PIL.Image.open(img_path)
+        img = img.resize((width, height), PIL.Image.ANTIALIAS)
+        img.save(os.path.join(path, dest_img_name))
+    except IOError:
+        return False
+
+    return True
 
 
-def export_all_in_dir(selected_dir, width, height, export_type, overwrite):
+def image_files_in_dir(selected_dir):
+    """
+    Returns the number of image files in the given directory
+
+    :param selected_dir: The directory containing the images
+    :return: the number of image files the directory contains
+    """
+    images = 0
+
+    for path, subdirs, files in os.walk(selected_dir):
+        for name in files:
+            if is_image(name):
+                images += 1
+
+    return images
+
+
+def export_all_in_dir(selected_dir, width, height, export_type, overwrite, progress_bar_callback=None):
     """
     Export all the images in the selected directory
 
@@ -77,10 +97,18 @@ def export_all_in_dir(selected_dir, width, height, export_type, overwrite):
     :return: `True` if all images were exported successfully or `False` if there was an error
     """
 
+    all_exported_successfully = True
+
     for path, subdirs, files in os.walk(selected_dir):
         for name in files:
             if is_image(name):
-                # TODO: Add a new window with a progress bar while exporting images
-                export_file(path, name, width, height, export_type, overwrite)
+                # export and check if everything went okay
+                exported_successfully = export_file(path, name, width, height, export_type, overwrite)
+                if not exported_successfully:
+                    all_exported_successfully = False
 
-    return True
+                # update the progress bar
+                if progress_bar_callback is not None:
+                    progress_bar_callback()
+
+    return all_exported_successfully

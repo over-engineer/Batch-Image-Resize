@@ -62,6 +62,49 @@ class Application(Frame):
 
         return messagebox.askyesno("Export confirmation", confirm_msg)
 
+    def increase_progress_bar_value(self):
+        """
+        Increase the progress bar value by one
+        """
+
+        self.progress_bar["value"] += 1
+        print("Increased progress bar value by one")
+
+    def clear_progress_window(self):
+        """
+        Clear the progress window
+        """
+
+        if self.progress_window is not None:
+            self.progress_window.destroy()
+
+    def display_progress_window(self, progress_maximum=100):
+        """
+        Display the progress window
+
+        :param progress_maximum: The maximum value of the progress bar (default is 100)
+        """
+
+        self.clear_progress_window()
+
+        self.progress_window = Toplevel(self)
+        self.progress_window.title("Exporting")
+        self.progress_window.geometry("300x100")
+
+        Label(self.progress_window,
+              text="Exporting images",
+              font=("Segoe UI", 16)).pack(fill="x", side="top")
+
+        self.progress_bar = ttk.Progressbar(self.progress_window,
+                                            orient="horizontal",
+                                            length=280,
+                                            mode="determinate")
+        self.progress_bar.pack(expand=True, fill="both", side="bottom")
+        self.progress_bar["value"] = 0
+        self.progress_bar["maximum"] = progress_maximum
+
+        self.progress_window.update()
+
     def get_settings_status(self):
         """
         Check if our settings are valid (directory exists, width and height are digits etc)
@@ -114,39 +157,31 @@ class Application(Frame):
         else:
             # Valid settings, confirm settings with the user and export
             if self.confirm_settings():
-                # result = imgedit.export_all_in_dir(
-                #     self.selected_directory.get(),
-                #     int(self.export_properties["width"].get()),
-                #     int(self.export_properties["height"].get()),
-                #     self.export_properties["type"].get(),
-                #     self.overwrite_original.get()
-                # )
+                num_of_images = imgedit.image_files_in_dir(self.selected_directory.get())
+                self.display_progress_window(num_of_images)
+                print("Progress window is on screen")
 
-                # Display progress
-                if self.progress_window is not None:
-                    self.progress_window.destroy()
+                print("Exporting images")
+                result = imgedit.export_all_in_dir(
+                    self.selected_directory.get(),
+                    int(self.export_properties["width"].get()),
+                    int(self.export_properties["height"].get()),
+                    self.export_properties["type"].get(),
+                    self.overwrite_original.get(),
+                    self.increase_progress_bar_value
+                )
 
-                self.progress_window = Toplevel(self)
-                self.progress_window.title("Exporting")
-                self.progress_window.geometry("300x100")
-                #self.progress_window.iconbitmap("icon.ico")
+                self.clear_progress_window()
+                print("Progress window is cleared")
 
-                Label(self.progress_window,
-                      text="Exporting images",
-                      font=("Segoe UI", 16)).pack(fill="x", side="top")
-
-                progress_bar = ttk.Progressbar(self.progress_window,
-                                                      orient="horizontal",
-                                                      length=280,
-                                                      mode="determinate")
-                progress_bar.pack(expand=True, fill="both", side="bottom")
-                progress_bar["value"] = 60
-                progress_bar["maximum"] = 100
-
-                # if result:
-                #     # at this point, we are done with our exports, display a success message
-                #     messagebox.showinfo("Exports completed",
-                #                         "All images were exported successfully")
+                if result:
+                    # at this point, we are done with our exports, display a success message
+                    messagebox.showinfo("Exports completed",
+                                        "All images were exported successfully")
+                else:
+                    # one or more images failed to export, display a warning
+                    messagebox.showwarning("Exports failed",
+                                           "One or more images failed to export")
 
     def browse_for_directory(self):
         """
@@ -253,6 +288,7 @@ class Application(Frame):
         # properties
         self.save_as_dropdown = None
         self.progress_window = None
+        self.progress_bar = None
 
         self.selected_directory = StringVar(self)
         self.overwrite_original = BooleanVar(self)
