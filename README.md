@@ -18,7 +18,7 @@ to overwrite the original files.
 
 ### How to build it?
 1. Make sure you have installed [Python 3](https://www.python.org/downloads/)
-2. Get these:
+2. Get these:  
 | Module                                                | Installation command      |
 | ----------------------------------------------------- | ------------------------- |
 | [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)   | `pip install Pillow`      |
