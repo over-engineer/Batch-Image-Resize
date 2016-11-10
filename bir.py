@@ -4,12 +4,28 @@
 # Copyright (c) 2016 dn0z
 # https://github.com/dn0z/Batch-Image-Resize
 
+import imgedit
 import os
-import PIL.Image
+
+from enum import Enum
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+
+
+class SettingsStatus(Enum):
+    """
+    An enumeration of the settings statuses
+    """
+
+    # valid settings
+    valid_settings = 1
+
+    # invalid settings
+    directory_not_selected = 2
+    directory_does_not_exist = 3
+    invalid_dimensions = 4
 
 
 class Application(Frame):
@@ -46,111 +62,70 @@ class Application(Frame):
 
         return messagebox.askyesno("Export confirmation", confirm_msg)
 
-    def is_image(self, filename):
+    def get_settings_status(self):
         """
-        Checks if a filename is an image (png, jpg or jpeg, case insensitive)
+        Check if our settings are valid (directory exists, width and height are digits etc)
 
-        :param filename: The filename (as a string)
-        :return: `True` if the given filename is an image, or `False` if it's not
-        """
-
-        file = filename.lower()
-        return file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg")
-
-    def get_filename_with_type(self, filename, file_type, suffix=""):
-        """
-        Get a filename and return it with the given suffix and the correct file extension for the given type
-
-        :param filename: The filename (e.g. "image_file.jpg")
-        :param file_type: The file type (e.g. "PNG")
-        :param suffix: An optional string to place between the name and the extension of the file (default is "")
-        :return: the filename with the correct extension for the given type (e.g. "image_file.png")
+        :return:    The settings status as an enumeration member of the
+                    `SettingsStatus` enumeration (e.g. `SettingsStatus.valid_settings`)
         """
 
-        extension = filename.split(".")[-1]
-        return filename[:-(len(extension) + 1)] + suffix + "." + file_type.lower()
+        selected_directory = self.selected_directory.get()
 
-    def export_file(self, path, name, width, height, export_type, overwrite):
-        """
-        Open, resize and save an image with the given properties
+        # Check if a directory is selected
+        if selected_directory == "No directory selected":
+            return SettingsStatus.directory_not_selected
 
-        :param path: The path to the directory where the image is located (without the image filename)
-        :param name: The filename of the image we want to export
-        :param width: The new width we want to resize to
-        :param height: The new height we want to resize to
-        :param export_type: The file type we want to save to (we ignore it if `overwrite` is `True`)
-        :param overwrite: Whether we want to overwrite the original files or not
-        """
+        # Check if the selected directory exists
+        if not os.path.isdir(selected_directory):
+            return SettingsStatus.directory_does_not_exist
 
-        img_path = os.path.join(path, name)
+        # Check if width and height are digits
+        if (not self.export_properties["width"].get().isdigit()) or \
+                (not self.export_properties["height"].get().isdigit()):
+            return SettingsStatus.invalid_dimensions
 
-        # open the given image and resize it
-        img = PIL.Image.open(img_path)
-        img = img.resize((width, height), PIL.Image.ANTIALIAS)
-
-        # set the destination image file we want to save
-        dest_img_name = self.get_filename_with_type(name, export_type, "_resized")
-        if overwrite:
-            dest_img_name = name
-
-        # save the resized/converted image
-        img.save(os.path.join(path, dest_img_name))
-
-    def init_export(self):
-        """
-        Export all the images in the selected directory
-
-        When `self.init_export()` is called, everything is ready to resize and export images
-        This loops through all the files in the given directory and calls `self.export_file()`
-        for the actual opening, resizing and saving of the files
-        """
-
-        # final export settings
-        directory_path = self.selected_directory.get()
-        width = int(self.export_properties["width"].get())
-        height = int(self.export_properties["height"].get())
-        export_type = self.export_properties["type"].get()
-        overwrite = self.overwrite_original.get()
-
-        # loop through the files in the given directory and export any image files
-        for path, subdirs, files in os.walk(directory_path):
-            for name in files:
-                if self.is_image(name):
-                    # TODO: Add a new window with a progress bar while exporting images
-                    self.export_file(path, name, width, height, export_type, overwrite)
-
-        # at this point, we are done with our exports, display a success message
-        messagebox.showinfo("Exports completed", "All images were exported successfully")
+        return SettingsStatus.valid_settings
 
     def export_button_handler(self):
         """
         The handler of the Export button
         """
 
-        selected_directory = self.selected_directory.get()
+        settings_status = self.get_settings_status()
 
-        # Check if we are ready to export
-        if selected_directory == "No directory selected":
-            # No directory selected
-            messagebox.showerror("Invalid directory", "You have to select a directory first")
+        if settings_status is not SettingsStatus.valid_settings:
+            # Invalid settings, display an error message
+            error_messages = {
+                SettingsStatus.directory_not_selected: [
+                    "Invalid directory",
+                    "You have to select a directory first"
+                ],
+                SettingsStatus.directory_does_not_exist: [
+                    "Invalid directory",
+                    "The directory \"" + self.selected_directory.get() + "\" does not exist"
+                ],
+                SettingsStatus.invalid_dimensions: [
+                    "Invalid dimensions",
+                    "Width and height must be integers"
+                ],
+            }
+            messagebox.showerror(*error_messages[settings_status])
         else:
-            # Directory selected
-            if not os.path.isdir(selected_directory):
-                # Directory does not exist
-                messagebox.showerror("Invalid directory",
-                                     "The directory \"" + selected_directory + "\" does not exist")
-            else:
-                # Directory exists
-                if (not self.export_properties["width"].get().isdigit()) or \
-                        (not self.export_properties["height"].get().isdigit()):
-                    # Dimensions are not digits
-                    messagebox.showerror("Invalid dimensions",
-                                         "Width and height must be integers")
-                else:
-                    # Dimensions are digits
-                    if self.confirm_settings():
-                        # Settings confirmed, we are ready to export
-                        self.init_export()
+            # Valid settings, confirm settings with the user and export
+            if self.confirm_settings():
+                result = imgedit.export_all_in_dir(
+                    self.selected_directory.get(),
+                    int(self.export_properties["width"].get()),
+                    int(self.export_properties["height"].get()),
+                    self.export_properties["type"].get(),
+                    self.overwrite_original.get()
+                )
+
+                if result:
+                    # at this point, we are done with our exports, display a success message
+                    messagebox.showinfo("Exports completed",
+                                        "All images were exported successfully")
 
     def browse_for_directory(self):
         """
@@ -212,10 +187,10 @@ class Application(Frame):
         save_as_label.grid(row=3, column=0, sticky="e")
 
         self.save_as_dropdown = ttk.OptionMenu(main_container,
-                                          self.export_properties["type"],
-                                          self.export_properties["type"].get(),
-                                          "PNG",
-                                          "JPEG")
+                                               self.export_properties["type"],
+                                               self.export_properties["type"].get(),
+                                               "PNG",
+                                               "JPEG")
         self.save_as_dropdown.grid(row=3, column=1, sticky="we", padx=2)
 
         # Overwrite original
