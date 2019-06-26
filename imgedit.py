@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 
 # Batch Image Resize - imgedit module
-# Copyright (c) 2016 dn0z
-# https://github.com/dn0z/Batch-Image-Resize
+# Copyright (c) 2016 over-engineer
+# https://github.com/over-engineer/Batch-Image-Resize
 
 import os
 import PIL.Image

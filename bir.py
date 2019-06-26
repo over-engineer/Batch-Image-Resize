@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 
 # Batch Image Resize
-# Copyright (c) 2016 dn0z
-# https://github.com/dn0z/Batch-Image-Resize
+# Copyright (c) 2016 over-engineer
+# https://github.com/over-engineer/Batch-Image-Resize
 
 import imgedit
 
@@ -182,8 +182,8 @@ class Application(Frame):
         t.insert(END,
                  "Batch Image Resize (v0.1)"
                  "\n"
-                 "\nDeveloped by dn0z"
-                 "\nhttps://github.com/dn0z/Batch-Image-Resize"
+                 "\nDeveloped by over-engineer"
+                 "\nhttps://github.com/over-engineer/Batch-Image-Resize"
                  "\n"
                  "\nThe icon is designed by Vecteezy "
                  "(https://iconfinder.com/icons/532771) "
@@ -192,7 +192,7 @@ class Application(Frame):
                  "\n\n"
                  "The MIT License (MIT)"
                  "\n\n"
-                 "Copyright (c) 2016 dn0z"
+                 "Copyright (c) 2016 over-engineer"
                  "\n\n"
                  "Permission is hereby granted, free of charge, to any person obtaining a copy"
                  "of this software and associated documentation files (the \"Software\"), to deal"
@@ -375,7 +375,7 @@ class Application(Frame):
             row=5, column=2, sticky="we")
 
         # Copyright
-        Label(main_container, text="Copyright (c) 2016 dn0z | v0.1", font=font_small).grid(
+        Label(main_container, text="Copyright (c) 2016 over-engineer | v0.1", font=font_small).grid(
             row=5, column=0, columnspan=2, sticky="we", pady=20)
 
     def __init__(self, parent=None):

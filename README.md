@@ -7,7 +7,7 @@ This is a simple and open source tool written in
 [Python](https://www.python.org/) to resize multiple images at once.
 
 ### Usage
-Get the latest [release](https://github.com/dn0z/Batch-Image-Resize/releases)
+Get the latest [release](https://github.com/over-engineer/Batch-Image-Resize/releases)
 and run `bir.exe`. Click **Browse** and select the folder containing
 the images you want to resize. Then enter the width, the height and
 click on **Export**.
